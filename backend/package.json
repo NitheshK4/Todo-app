@@ -2,6 +2,7 @@
   "name": "todo-backend",
   "version": "1.0.0",
   "description": "Enterprise Todo API with JWT, MFA, Redis, Razorpay",
+  "license": "MIT",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

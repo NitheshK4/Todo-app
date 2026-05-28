@@ -2,6 +2,7 @@
   "name": "todo-frontend",
   "version": "1.0.0",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -15,6 +16,7 @@
     "react-hot-toast": "^2.6.0",
     "react-icons": "^4.12.0",
     "react-router-dom": "^6.30.3",
+    "recharts": "^3.8.1",
     "zustand": "^4.5.7"
   },
   "devDependencies": {
