@@ -228,7 +228,6 @@ If you get stuck at any step:
 3. Verify Razorpay keys are in test mode
 4. For MFA issues: time sync your phone
 
-#end
 
 ---
 
