@@ -242,7 +242,17 @@ The application features an automated background notification system powered by 
 
 ---
 
+## 🚀 CI/CD Pipeline & E2E Testing
+
+The project includes GitHub Actions workflows for continuous integration and automated testing:
+
+- **Datadog Synthetic Tests** ([datadog-synthetics.yml](.github/workflows/datadog-synthetics.yml)): Runs automated E2E synthetic tests on every push or pull request to the `main` branch. 
+  - *Note*: This step is configured with `continue-on-error: true` so that missing repository secret configurations do not block status checks.
+  - To enable active notifications and metrics, add your `DD_API_KEY` and `DD_APP_KEY` secrets to your GitHub repository settings.
+- **NPM Package Publisher** ([npm-publish.yml](.github/workflows/npm-publish.yml)): Automates testing and publication of Node.js packages to the registry when a release is created.
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-##end
