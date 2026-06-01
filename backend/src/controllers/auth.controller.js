@@ -67,7 +67,15 @@ const login = async (req, res) => {
       success: true,
       accessToken,
       refreshToken,
-      user: { id: user.id, name: user.name, email: user.email, plan: user.plan, mfaEnabled: user.mfaEnabled },
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email, 
+        plan: user.plan, 
+        mfaEnabled: user.mfaEnabled,
+        emailRemindersEnabled: user.emailRemindersEnabled,
+        dailyDigestEnabled: user.dailyDigestEnabled
+      },
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -109,7 +117,16 @@ const getMe = (req, res) => {
   const u = req.user;
   res.json({
     success: true,
-    user: { id: u.id, name: u.name, email: u.email, plan: u.plan, mfaEnabled: u.mfaEnabled, role: u.role },
+    user: { 
+      id: u.id, 
+      name: u.name, 
+      email: u.email, 
+      plan: u.plan, 
+      mfaEnabled: u.mfaEnabled, 
+      role: u.role,
+      emailRemindersEnabled: u.emailRemindersEnabled,
+      dailyDigestEnabled: u.dailyDigestEnabled
+    },
   });
 };
 

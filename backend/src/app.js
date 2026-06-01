@@ -10,8 +10,14 @@ const authRoutes = require('./routes/auth.routes');
 const mfaRoutes = require('./routes/mfa.routes');
 const todoRoutes = require('./routes/todo.routes');
 const paymentRoutes = require('./routes/payment.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
+const userRoutes = require('./routes/user.routes');
+const schedulerService = require('./services/scheduler.service');
 
 const app = express();
+
+// Initialize Background Scheduler
+schedulerService.init();
 
 // ── Security Middlewares ─────────────────────────────────────
 app.use(helmet());
@@ -34,6 +40,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/mfa', mfaRoutes);
 app.use('/api/todos', todoRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/user', userRoutes);
 
 // ── 404 Handler ───────────────────────────────────────────────
 app.use((req, res) => {

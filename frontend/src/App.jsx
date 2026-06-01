@@ -10,6 +10,7 @@ import MFASetupPage from './pages/MFASetupPage';
 import MFAVerifyPage from './pages/MFAVerifyPage';
 import DashboardPage from './pages/DashboardPage';
 import PricingPage from './pages/PricingPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 
 // Handles redirect after Google OAuth
 const OAuthCallback = () => {
@@ -50,6 +51,7 @@ const App = () => {
         <Route path="/mfa-verify" element={<MFAVerifyPage />} />
         <Route path="/oauth-callback" element={<OAuthCallback />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
         <Route path="/mfa-setup" element={<ProtectedRoute><MFASetupPage /></ProtectedRoute>} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

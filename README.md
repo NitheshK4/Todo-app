@@ -231,6 +231,17 @@ If you get stuck at any step:
 
 ---
 
+## 📧 Email Notifications & Reminders
+
+The application features an automated background notification system powered by `node-cron` and `nodemailer`:
+
+- **Due Task Reminders (Hourly)**: Scans for tasks due within the next 24 hours and sends a consolidated warning email. Utilizes Redis caching to ensure a user only receives one notification per task.
+- **Daily Productivity Digest (8:00 AM)**: Sends a daily summary email containing all active, pending, and overdue tasks.
+- **User Preferences**: Users can toggle email reminders and daily digests independently via the **Notification Settings** modal in the navigation bar.
+- **Development Testing**: Uses auto-generated Ethereal SMTP credentials as a fallback if real SMTP configuration is omitted. Run `node backend/src/services/test-email.js` to test the email templates end-to-end.
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

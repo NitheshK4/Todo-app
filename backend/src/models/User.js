@@ -14,6 +14,8 @@ const User = sequelize.define('User', {
   plan: { type: DataTypes.ENUM('free', 'pro', 'enterprise'), defaultValue: 'free' },
   isEmailVerified: { type: DataTypes.BOOLEAN, defaultValue: false },
   role: { type: DataTypes.ENUM('user', 'admin'), defaultValue: 'user' },
+  emailRemindersEnabled: { type: DataTypes.BOOLEAN, defaultValue: true },
+  dailyDigestEnabled: { type: DataTypes.BOOLEAN, defaultValue: true },
 }, { tableName: 'users', timestamps: true });
 
 module.exports = User;

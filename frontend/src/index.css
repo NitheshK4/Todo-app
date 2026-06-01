@@ -831,3 +831,344 @@ h3 {
     padding: 0 1rem;
   }
 }
+
+/* ── Analytics Page ────────────────────────────────────────── */
+.analytics-page {
+  padding: 2rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.analytics-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ── Stat Cards ────────────────────────────────────────────── */
+.analytics-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.analytics-stat-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.analytics-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.analytics-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.analytics-stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.analytics-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  font-weight: 500;
+}
+
+.analytics-stat-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+  opacity: 0.7;
+}
+
+.analytics-stat-glow {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  opacity: 0.08;
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* ── Chart Layout ─────────────────────────────────────────── */
+.analytics-charts-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.analytics-chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  flex: 1;
+  min-width: 260px;
+  transition: border-color 0.2s;
+}
+
+.analytics-chart-card:hover {
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.analytics-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.analytics-chart-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.analytics-chart-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  background: rgba(124, 58, 237, 0.15);
+  color: #a78bfa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Completion Ring ─────────────────────────────────────── */
+.analytics-ring-card {
+  max-width: 260px;
+  flex: 0 0 auto;
+}
+
+.analytics-ring-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0.5rem auto;
+}
+
+.analytics-ring-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.analytics-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.analytics-ring-pct {
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.analytics-ring-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.analytics-ring-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* ── Legend ──────────────────────────────────────────────── */
+.analytics-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.analytics-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.analytics-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Recently Completed ──────────────────────────────────── */
+.analytics-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.analytics-recent-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: border-color 0.2s;
+}
+
+.analytics-recent-item:hover {
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.analytics-recent-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.analytics-recent-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.analytics-recent-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Streak Banner ────────────────────────────────────────── */
+.analytics-streak-banner {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(124, 58, 237, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.analytics-streak-fire {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.analytics-streak-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.analytics-streak-sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.analytics-streak-days {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: auto;
+  align-items: center;
+}
+
+.analytics-streak-pip {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s;
+}
+
+.analytics-streak-pip.active {
+  background: #f59e0b;
+  border-color: #fbbf24;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+}
+
+/* ── Chart Tooltip ───────────────────────────────────────── */
+.chart-tooltip {
+  background: #1e1e3a;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.82rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.chart-tooltip-label {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-bottom: 0.25rem;
+}
+
+/* ── Analytics Responsive ────────────────────────────────── */
+@media (max-width: 640px) {
+  .analytics-page {
+    padding: 1rem;
+  }
+
+  .analytics-ring-card {
+    max-width: 100%;
+    flex: 1;
+  }
+
+  .analytics-streak-days {
+    margin-left: 0;
+  }
+}

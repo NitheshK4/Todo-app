@@ -18,11 +18,15 @@ const generateQRCode = (otpauthUrl) => QRCode.toDataURL(otpauthUrl);
 const verifyToken = (encryptedSecret, token) => {
   const secret = decrypt(encryptedSecret);
   if (!secret) return false;
+  
+  // Sanitize token: remove whitespace and non-digits
+  const sanitizedToken = String(token).trim().replace(/\D/g, '');
+
   return speakeasy.totp.verify({
     secret,
     encoding: 'base32',
-    token: String(token),
-    window: 1,
+    token: sanitizedToken,
+    window: 3, // Increased from 1 to 3 to handle small time skew offsets
   });
 };
 
