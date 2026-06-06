@@ -13,20 +13,46 @@ const decryptTodo = (todo) => {
 const getTodos = async (req, res) => {
   try {
     const userId = req.user.id;
+    const { search, priority, status, tags } = req.query;
 
     // Try cache
-    const cached = await redisService.getCachedTodos(userId);
-    if (cached) return res.json({ success: true, todos: cached, source: 'cache' });
+    let decrypted = await redisService.getCachedTodos(userId);
+    let source = 'cache';
 
-    const todos = await Todo.findAll({
-      where: { userId },
-      order: [['createdAt', 'DESC']],
-    });
+    if (!decrypted) {
+      const todos = await Todo.findAll({
+        where: { userId },
+        order: [['createdAt', 'DESC']],
+      });
+      decrypted = todos.map(decryptTodo);
+      await redisService.cacheTodos(userId, decrypted);
+      source = 'db';
+    }
 
-    const decrypted = todos.map(decryptTodo);
-    await redisService.cacheTodos(userId, decrypted);
+    // Apply filters in memory
+    let filteredTodos = [...decrypted];
 
-    res.json({ success: true, todos: decrypted, source: 'db' });
+    if (priority) {
+      filteredTodos = filteredTodos.filter(t => t.priority === priority);
+    }
+    if (status) {
+      filteredTodos = filteredTodos.filter(t => t.status === status);
+    }
+    if (tags) {
+      const tagList = Array.isArray(tags) ? tags : tags.split(',').map(t => t.trim());
+      filteredTodos = filteredTodos.filter(t => 
+        t.tags && tagList.every(tag => t.tags.includes(tag))
+      );
+    }
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredTodos = filteredTodos.filter(t => 
+        (t.title && t.title.toLowerCase().includes(searchLower)) ||
+        (t.description && t.description.toLowerCase().includes(searchLower))
+      );
+    }
+
+    res.json({ success: true, todos: filteredTodos, source });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
