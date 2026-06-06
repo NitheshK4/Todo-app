@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 const PRIORITY_COLORS = { low: 'dot-low', medium: 'dot-medium', high: 'dot-high', urgent: 'dot-urgent' };
 const STATUS_MAP = { pending: 'badge-pending', in_progress: 'badge-in_progress', completed: 'badge-completed', archived: 'badge-archived' };
 
-const TodoCard = ({ todo, onUpdated, onDeleted }) => {
+const TodoCard = ({ todo, onUpdated, onDeleted, isSelected, onToggleSelect }) => {
   const [deleting, setDeleting] = useState(false);
 
   const toggleStatus = async () => {
@@ -29,6 +29,20 @@ const TodoCard = ({ todo, onUpdated, onDeleted }) => {
 
   return (
     <div className={`todo-item fade-in ${todo.status === 'completed' ? 'completed' : ''}`} onClick={toggleStatus}>
+      <input
+        type="checkbox"
+        checked={isSelected}
+        onChange={onToggleSelect}
+        onClick={e => e.stopPropagation()}
+        style={{
+          marginRight: '0.25rem',
+          cursor: 'pointer',
+          alignSelf: 'center',
+          accentColor: 'var(--primary)',
+          width: '16px',
+          height: '16px'
+        }}
+      />
       <div className={`priority-dot ${PRIORITY_COLORS[todo.priority]}`} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div className="todo-title">{todo.title}</div>
