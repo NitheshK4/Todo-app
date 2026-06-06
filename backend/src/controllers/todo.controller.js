@@ -13,7 +13,7 @@ const decryptTodo = (todo) => {
 const getTodos = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { search, priority, status, tags } = req.query;
+    const { search, priority, status, tags, sortBy, sortOrder } = req.query;
 
     // Try cache
     let decrypted = await redisService.getCachedTodos(userId);
@@ -51,6 +51,29 @@ const getTodos = async (req, res) => {
         (t.description && t.description.toLowerCase().includes(searchLower))
       );
     }
+
+    // Apply sorting in memory
+    const orderField = ['createdAt', 'dueDate', 'priority'].includes(sortBy) ? sortBy : 'createdAt';
+    const orderDirection = ['ASC', 'DESC'].includes(sortOrder?.toUpperCase()) ? sortOrder.toUpperCase() : 'DESC';
+
+    const priorityWeight = { low: 1, medium: 2, high: 3, urgent: 4 };
+
+    filteredTodos.sort((a, b) => {
+      let valA = a[orderField];
+      let valB = b[orderField];
+
+      if (orderField === 'priority') {
+        valA = priorityWeight[valA] || 0;
+        valB = priorityWeight[valB] || 0;
+      } else if (orderField === 'dueDate' || orderField === 'createdAt') {
+        valA = valA ? new Date(valA).getTime() : 0;
+        valB = valB ? new Date(valB).getTime() : 0;
+      }
+
+      if (valA < valB) return orderDirection === 'ASC' ? -1 : 1;
+      if (valA > valB) return orderDirection === 'ASC' ? 1 : -1;
+      return 0;
+    });
 
     res.json({ success: true, todos: filteredTodos, source });
   } catch (err) {

@@ -17,16 +17,20 @@ const DashboardPage = () => {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState([]);
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('DESC');
 
   const fetchTodos = async () => {
     try {
-      const { data } = await api.get('/todos');
+      const { data } = await api.get('/todos', {
+        params: { sortBy, sortOrder }
+      });
       setTodos(data.todos);
     } catch { toast.error('Failed to load todos'); }
     finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchTodos(); }, []);
+  useEffect(() => { fetchTodos(); }, [sortBy, sortOrder]);
 
   const filtered = todos.filter(t => {
     const matchFilter = filter === 'all' || t.status === filter;
@@ -119,12 +123,29 @@ const DashboardPage = () => {
             <input className="form-input" placeholder="Search todos..." value={search}
               onChange={e => setSearch(e.target.value)} style={{ paddingLeft: '2.5rem' }} />
           </div>
-          <div className="filters">
+          <div className="filters" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
             {FILTERS.map(f => (
               <button key={f} className={`filter-btn ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
                 {f === 'all' ? 'All' : f.replace('_', ' ')}
               </button>
             ))}
+            <select
+              className="form-select"
+              value={`${sortBy}:${sortOrder}`}
+              onChange={e => {
+                const [by, order] = e.target.value.split(':');
+                setSortBy(by);
+                setSortOrder(order);
+              }}
+              style={{ width: 'auto', padding: '0.35rem 1rem', height: 'auto', fontSize: '0.82rem', borderRadius: '20px' }}
+            >
+              <option value="createdAt:DESC">Newest First</option>
+              <option value="createdAt:ASC">Oldest First</option>
+              <option value="dueDate:ASC">Due Soonest</option>
+              <option value="dueDate:DESC">Due Latest</option>
+              <option value="priority:DESC">Highest Priority</option>
+              <option value="priority:ASC">Lowest Priority</option>
+            </select>
           </div>
         </div>
 
