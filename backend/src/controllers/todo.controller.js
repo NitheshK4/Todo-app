@@ -130,4 +130,54 @@ const getTodoById = async (req, res) => {
   }
 };
 
-module.exports = { getTodos, createTodo, updateTodo, deleteTodo, getTodoById };
+// POST /api/todos/bulk-update
+const bulkUpdateTodos = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { ids, status, priority } = req.body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: 'ids array is required and must not be empty' });
+    }
+
+    const updates = {};
+    if (status) updates.status = status;
+    if (priority) updates.priority = priority;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ success: false, message: 'Nothing to update' });
+    }
+
+    await Todo.update(updates, {
+      where: { id: ids, userId }
+    });
+
+    await redisService.invalidateTodosCache(userId);
+    res.json({ success: true, message: `${ids.length} todos updated successfully` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// POST /api/todos/bulk-delete
+const bulkDeleteTodos = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { ids } = req.body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: 'ids array is required and must not be empty' });
+    }
+
+    const deletedCount = await Todo.destroy({
+      where: { id: ids, userId }
+    });
+
+    await redisService.invalidateTodosCache(userId);
+    res.json({ success: true, message: `${deletedCount} todos deleted successfully` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = { getTodos, createTodo, updateTodo, deleteTodo, getTodoById, bulkUpdateTodos, bulkDeleteTodos };
