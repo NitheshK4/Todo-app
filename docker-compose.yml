@@ -6,6 +6,13 @@ services:
     image: postgres:16-alpine
     container_name: todo_postgres
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          memory: 128M
     environment:
       POSTGRES_DB: todo_db
       POSTGRES_USER: postgres
@@ -25,6 +32,13 @@ services:
     image: redis:7-alpine
     container_name: todo_redis
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          memory: 64M
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
@@ -41,6 +55,13 @@ services:
     build: ./backend
     container_name: todo_backend
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          memory: 256M
     depends_on:
       postgres:
         condition: service_healthy
@@ -67,6 +88,8 @@ services:
       RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-rzp_test_placeholder}
       RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-placeholder}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
     ports:
       - "5000:5000"
 
@@ -75,6 +98,13 @@ services:
     build: ./frontend
     container_name: todo_frontend
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          memory: 64M
     depends_on:
       - backend
     ports:
