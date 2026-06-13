@@ -14,4 +14,9 @@ router.post('/', validateTodo, ctrl.createTodo);
 router.put('/:id', validateTodo, ctrl.updateTodo);
 router.delete('/:id', ctrl.deleteTodo);
 
+// Subtasks routes
+router.post('/:todoId/subtasks', ctrl.createSubtask);
+router.put('/:todoId/subtasks/:subtaskId', ctrl.updateSubtask);
+router.delete('/:todoId/subtasks/:subtaskId', ctrl.deleteSubtask);
+
 module.exports = router;

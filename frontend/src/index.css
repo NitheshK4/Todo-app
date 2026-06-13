@@ -1172,3 +1172,57 @@ h3 {
     margin-left: 0;
   }
 }
+
+/* ── Subtasks Styles ──────────────────────────────────────── */
+.todo-item.expanded {
+  border-color: rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.subtasks-panel {
+  animation: slideDown 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+  }
+}
+
+.subtask-item {
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.subtask-item:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.subtask-item.completed {
+  opacity: 0.65;
+}
+
+.btn-delete-subtask {
+  opacity: 0;
+}
+
+.subtask-item:hover .btn-delete-subtask {
+  opacity: 0.6;
+}
+
+.subtask-item:hover .btn-delete-subtask:hover {
+  opacity: 1;
+  color: #ef4444;
+}
+
+.subtask-progress-bar-fill {
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+}

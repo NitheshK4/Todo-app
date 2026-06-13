@@ -1,4 +1,4 @@
-const { Todo } = require('../models');
+const { Todo, Subtask } = require('../models');
 const { encrypt, decrypt } = require('../services/crypto.service');
 const redisService = require('../services/redis.service');
 
@@ -6,6 +6,13 @@ const decryptTodo = (todo) => {
   const plain = todo.toJSON ? todo.toJSON() : { ...todo };
   plain.title = decrypt(plain.title) || plain.title;
   plain.description = plain.description ? decrypt(plain.description) : null;
+  if (plain.subtasks) {
+    plain.subtasks = plain.subtasks.map(sub => {
+      const subPlain = sub.toJSON ? sub.toJSON() : { ...sub };
+      subPlain.title = decrypt(subPlain.title) || subPlain.title;
+      return subPlain;
+    });
+  }
   return plain;
 };
 
@@ -22,7 +29,11 @@ const getTodos = async (req, res) => {
     if (!decrypted) {
       const todos = await Todo.findAll({
         where: { userId },
-        order: [['createdAt', 'DESC']],
+        include: [{ model: Subtask, as: 'subtasks' }],
+        order: [
+          ['createdAt', 'DESC'],
+          [{ model: Subtask, as: 'subtasks' }, 'createdAt', 'ASC']
+        ],
       });
       decrypted = todos.map(decryptTodo);
       await redisService.cacheTodos(userId, decrypted);
@@ -145,7 +156,13 @@ const deleteTodo = async (req, res) => {
 // GET /api/todos/:id
 const getTodoById = async (req, res) => {
   try {
-    const todo = await Todo.findOne({ where: { id: req.params.id, userId: req.user.id } });
+    const todo = await Todo.findOne({
+      where: { id: req.params.id, userId: req.user.id },
+      include: [{ model: Subtask, as: 'subtasks' }],
+      order: [
+        [{ model: Subtask, as: 'subtasks' }, 'createdAt', 'ASC']
+      ]
+    });
     if (!todo) return res.status(404).json({ success: false, message: 'Todo not found' });
     res.json({ success: true, todo: decryptTodo(todo) });
   } catch (err) {
@@ -203,4 +220,97 @@ const bulkDeleteTodos = async (req, res) => {
   }
 };
 
-module.exports = { getTodos, createTodo, updateTodo, deleteTodo, getTodoById, bulkUpdateTodos, bulkDeleteTodos };
+// POST /api/todos/:todoId/subtasks
+const createSubtask = async (req, res) => {
+  try {
+    const { todoId } = req.params;
+    const { title } = req.body;
+    const userId = req.user.id;
+
+    const todo = await Todo.findOne({ where: { id: todoId, userId } });
+    if (!todo) return res.status(404).json({ success: false, message: 'Todo not found' });
+
+    if (!title || !title.trim()) {
+      return res.status(400).json({ success: false, message: 'Subtask title is required' });
+    }
+
+    const subtask = await Subtask.create({
+      todoId,
+      title: encrypt(title),
+      isCompleted: false,
+      isEncrypted: true
+    });
+
+    await redisService.invalidateTodosCache(userId);
+
+    const decryptedSubtask = subtask.toJSON();
+    decryptedSubtask.title = title;
+
+    res.status(201).json({ success: true, subtask: decryptedSubtask });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// PUT /api/todos/:todoId/subtasks/:subtaskId
+const updateSubtask = async (req, res) => {
+  try {
+    const { todoId, subtaskId } = req.params;
+    const { title, isCompleted } = req.body;
+    const userId = req.user.id;
+
+    const todo = await Todo.findOne({ where: { id: todoId, userId } });
+    if (!todo) return res.status(404).json({ success: false, message: 'Todo not found' });
+
+    const subtask = await Subtask.findOne({ where: { id: subtaskId, todoId } });
+    if (!subtask) return res.status(404).json({ success: false, message: 'Subtask not found' });
+
+    const updates = {};
+    if (title !== undefined) updates.title = encrypt(title);
+    if (isCompleted !== undefined) updates.isCompleted = isCompleted;
+
+    await subtask.update(updates);
+    await redisService.invalidateTodosCache(userId);
+
+    const decryptedSubtask = subtask.toJSON();
+    decryptedSubtask.title = title !== undefined ? title : decrypt(subtask.title);
+
+    res.json({ success: true, subtask: decryptedSubtask });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// DELETE /api/todos/:todoId/subtasks/:subtaskId
+const deleteSubtask = async (req, res) => {
+  try {
+    const { todoId, subtaskId } = req.params;
+    const userId = req.user.id;
+
+    const todo = await Todo.findOne({ where: { id: todoId, userId } });
+    if (!todo) return res.status(404).json({ success: false, message: 'Todo not found' });
+
+    const subtask = await Subtask.findOne({ where: { id: subtaskId, todoId } });
+    if (!subtask) return res.status(404).json({ success: false, message: 'Subtask not found' });
+
+    await subtask.destroy();
+    await redisService.invalidateTodosCache(userId);
+
+    res.json({ success: true, message: 'Subtask deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = {
+  getTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+  getTodoById,
+  bulkUpdateTodos,
+  bulkDeleteTodos,
+  createSubtask,
+  updateSubtask,
+  deleteSubtask
+};
